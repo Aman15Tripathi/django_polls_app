@@ -41,3 +41,5 @@ Thumbs.db
 *.egg-info/
 dist/
 build/
+
+django_app/oldsetting.py
