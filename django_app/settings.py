@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url #type:ignore
+import dj_database_url # type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-wi8q&)cy_x70%8kwmeyib&r9et$*()a0r)y*%x==#djn+*3ct5'
-SECRET_KEY= os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False).lower==True
+DEBUG = os.environ.get("DEBUG",'False') == True # should be added if Debug is false
+
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -40,14 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'polls',
-    'rest_framework',
     'accounts',
+    'rest_framework',
     'corsheaders'
-    
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Add CORS middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_app.middleware.CustomHeaderMiddleware',
-
+    'django_app.middleware.LogRequestMiddleware',  # Add custom middleware
+    'django_app.middleware.CustomHeaderMiddleware',  # Add custom middleware
 ]
 
 ROOT_URLCONF = 'django_app.urls'
@@ -64,7 +63,7 @@ ROOT_URLCONF = 'django_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS' : [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'], #DIRS: A list of directories where the engine should look for template source files, in search order.
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,14 +84,14 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3', #ENGINE: Specifies the database backend (e.g., PostgreSQL, MySQL).
+        'NAME': BASE_DIR / 'db.sqlite3', #NAME: The name of the database file (for SQLite).
     }
 }
-
-# DATABASES['default'] = dj_database_url.parse('postgresql://django_db_opy0_user:LnwdgbOswlIZCzSSYHRPBiM0vj0Bsy0H@dpg-csaa3gij1k6c73cnek5g-a.singapore-postgres.render.com/django_db_opy0')
 databaseURL = os.environ.get('DATABASE_URL')
-DATABASES['default'] = dj_database_url.parse(databaseURL)
+DATABASES['default'] = dj_database_url.parse(databaseURL) 
+# DATABASES['default'] = dj_database_url.parse('postgresql://polls_db_ucdy_user:hLlQEtoyUJv2nBivJA1pEnvwtVadEb8i@dpg-csa69qa3esus739pmr30-a.singapore-postgres.render.com/polls_db_ucdy') # This line of code is used to parse the database URL from the environment variable DATABASE_URL. This is useful when you deploy your Django application to Heroku, as Heroku automatically sets the DATABASE_URL environment variable for you. This line of code will parse the database URL and set the default database configuration for your Django application.
+# The above code is the default database configuration that Django uses when you first create a project.
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -124,11 +123,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-],
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    'EXCEPTION_HANDLER': 'django_app.utils.custom_exception_handler',
 }
 
-CORS_ALLOWED_ORIGINS=["http://localhost:3000",]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+]
 
+CORS_ALLOW_ALL_ORIGINS = DEBUG #for dev purpose
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
